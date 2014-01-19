@@ -189,7 +189,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MkS-Xe-RGD">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MkS-Xe-RGD">
                                 <rect key="frame" x="0.0" y="66" width="320" height="502"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -197,13 +197,21 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <dataDetectorType key="dataDetectorTypes" link="YES"/>
                             </textView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="F14-pv-RLl">
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="F14-pv-RLl">
                                 <rect key="frame" x="150" y="274" width="37" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="MkS-Xe-RGD" secondAttribute="bottom" id="1CA-Ja-kSt"/>
+                            <constraint firstItem="MkS-Xe-RGD" firstAttribute="top" secondItem="JYD-Tb-ERZ" secondAttribute="bottom" constant="2" id="3UY-gl-Yzy"/>
+                            <constraint firstItem="F14-pv-RLl" firstAttribute="top" secondItem="JYD-Tb-ERZ" secondAttribute="bottom" constant="210" id="HtB-Bw-gLj"/>
+                            <constraint firstItem="MkS-Xe-RGD" firstAttribute="leading" secondItem="ZlS-nQ-kgg" secondAttribute="leading" id="P5b-Ej-VI4"/>
+                            <constraint firstItem="F14-pv-RLl" firstAttribute="leading" secondItem="ZlS-nQ-kgg" secondAttribute="leading" constant="150" id="obV-NY-c5k"/>
+                            <constraint firstAttribute="trailing" secondItem="MkS-Xe-RGD" secondAttribute="trailing" id="wFo-dK-2WX"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="eyd-Fr-s94"/>
                     <connections>

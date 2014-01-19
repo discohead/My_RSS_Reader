@@ -50,6 +50,12 @@
     
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.tableView reloadData];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -74,7 +80,7 @@
     
     // Configure the cell...
     cell.textLabel.text = folderDictionary[@"name"];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%i Feeds", [folderDictionary[@"feeds"] count]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu Feeds", (unsigned long)[folderDictionary[@"feeds"] count]];
     
     
     return cell;
