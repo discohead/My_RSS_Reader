@@ -1,5 +1,5 @@
 //
-//  MRRViewController.h
+//  MRRFeedTableViewController.h
 //  My RSS Reader
 //
 //  Created by Jared McFarland on 1/18/14.
@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MRRViewController : UIViewController
+@interface MRRFeedTableViewController : UITableViewController
+
+@property (strong, nonatomic) NSMutableDictionary *feed;
 
 @end
