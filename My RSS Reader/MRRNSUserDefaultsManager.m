@@ -14,21 +14,27 @@
 
 @implementation MRRNSUserDefaultsManager
 
+- (void)updateAllFolders:(NSMutableArray *)allFolders
+{
+    [[NSUserDefaults standardUserDefaults] setObject:allFolders forKey:@"folders"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 
 - (void)addFolder:(NSMutableDictionary *)folder
 {
-    NSMutableDictionary *folders = [self folders];
+    NSMutableArray *folders = [self folders];
     
     //Lazy instantiation of user defaults main dictionary of folders
     if (!folders)
     {
-        folders = [[NSMutableDictionary alloc] init];
-        [folders setObject:folder forKey:folder[@"name"]];
+        folders = [[NSMutableArray alloc] init];
+        [folders addObject:folder];
         [[NSUserDefaults standardUserDefaults] setObject:folders forKey:@"folders"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     } else
     {
-        [folders setObject:folder forKey:folder[@"name"]];
+        [folders addObject:folder];
         [[NSUserDefaults standardUserDefaults] setObject:folders forKey:@"folders"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
@@ -37,23 +43,30 @@
 
 - (void)deleteFolder:(NSMutableDictionary *)folderToDelete
 {
-    NSMutableDictionary *folders = [self folders];
-    [folders removeObjectForKey:folderToDelete[@"name"]];
+    NSMutableArray *folders = [self folders];
+    [folders removeObject:folderToDelete];
     [[NSUserDefaults standardUserDefaults] setObject:folders forKey:@"folders"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)updateFolder:(NSMutableDictionary *)folder
 {
-    NSMutableDictionary *folders = [self folders];
-    [folders setObject:folder forKey:folder[@"name"]];
-    [[NSUserDefaults standardUserDefaults] setObject:folders forKey:@"folders"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSMutableArray *folders = [self folders];
+    NSUInteger idx = [folders indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        NSDictionary *folderDictionary = (NSDictionary *)obj;
+        return [folderDictionary[@"name"] isEqualToString:folder[@"name"]];
+    }];
+    if (idx != NSNotFound)
+    {
+        [folders replaceObjectAtIndex:idx withObject:folder];
+        [[NSUserDefaults standardUserDefaults] setObject:folders forKey:@"folders"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
 }
 
-- (NSMutableDictionary *)folders
+- (NSMutableArray *)folders
 {
-    NSMutableDictionary *folders = [[[NSUserDefaults standardUserDefaults] objectForKey:@"folders"] mutableCopy];
+    NSMutableArray *folders = [[[NSUserDefaults standardUserDefaults] objectForKey:@"folders"] mutableCopy];
     return folders;
 }
 

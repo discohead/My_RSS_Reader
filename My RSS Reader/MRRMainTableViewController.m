@@ -45,8 +45,8 @@
 
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    //Probably a better way to do this. NSUserDefaults is storing dictionary of folders, but much easier to use an array for tableview datasource.
-    self.folders = [[[self.userDefaultsManager folders] allValues] mutableCopy];
+    self.folders = [self.userDefaultsManager folders];
+
     
 }
 
@@ -76,11 +76,11 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     //Get NSMutableDictionary for folder
-    NSMutableDictionary *folderDictionary = (NSMutableDictionary *)self.folders[indexPath.row];
+    NSMutableDictionary *folder = self.folders[indexPath.row];
     
     // Configure the cell...
-    cell.textLabel.text = folderDictionary[@"name"];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu Feeds", (unsigned long)[folderDictionary[@"feeds"] count]];
+    cell.textLabel.text = folder[@"name"];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu Feeds", (unsigned long)[folder[@"feeds"] count]];
     
     
     return cell;
@@ -115,19 +115,20 @@
 
 
 // Override to support rearranging the table view.
-//- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-//{
-//    Fix: NSUserDefaults is storing folders in a dictionary so this re-ordering will not persist.
-//    [self.folders exchangeObjectAtIndex:fromIndexPath.row withObjectAtIndex:toIndexPath.row];
-//}
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+    [self.folders exchangeObjectAtIndex:fromIndexPath.row withObjectAtIndex:toIndexPath.row];
+    [self.userDefaultsManager updateAllFolders:self.folders];
+    [self.tableView reloadData];
+}
 
 
 // Override to support conditional rearranging of the table view.
-//- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    // Return NO if you do not want the item to be re-orderable.
-//    return YES;
-//}
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
 
 
 

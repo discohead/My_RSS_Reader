@@ -12,10 +12,11 @@
 
 @interface MRRNSUserDefaultsManager : NSObject
 
+- (void)updateAllFolders:(NSMutableArray *)allFolders;
 - (void)addFolder:(NSMutableDictionary *)folder;
 - (void)deleteFolder:(NSMutableDictionary *)folderToDelete;
 - (void)updateFolder:(NSMutableDictionary *)folder;
-- (NSMutableDictionary *)folders;
+- (NSMutableArray *)folders;
 
 
 @end

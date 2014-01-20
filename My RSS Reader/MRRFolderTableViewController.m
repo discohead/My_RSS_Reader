@@ -91,6 +91,7 @@
 {
     [self.folder[@"feeds"] exchangeObjectAtIndex:fromIndexPath.row withObjectAtIndex:toIndexPath.row];
     [self.userDefaultsManager updateFolder:self.folder];
+    [self.tableView reloadData];
 }
 
 
