@@ -25,6 +25,8 @@
 		7F6DD209188AE67A0089E6AE /* MRRMainTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6DD208188AE67A0089E6AE /* MRRMainTableViewController.m */; };
 		7F6DD20C188AF83D0089E6AE /* MRRFolderTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6DD20B188AF83D0089E6AE /* MRRFolderTableViewController.m */; };
 		7F6DD20F188B04E90089E6AE /* MRRNewFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F6DD20E188B04E90089E6AE /* MRRNewFeedViewController.m */; };
+		7FAC2754188F5240007DE106 /* MRRWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FAC2753188F5240007DE106 /* MRRWebViewController.m */; };
+		7FAC2758188F5A5F007DE106 /* MRRHTMLSourceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FAC2757188F5A5F007DE106 /* MRRHTMLSourceViewController.m */; };
 		7FFB08BD188B13180043C88F /* MRRFeedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB08BC188B13180043C88F /* MRRFeedTableViewController.m */; };
 		DD68E3A5F9294ED58C5BA4A3 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CDF9655B07B42F59D7BCE47 /* libPods.a */; };
 /* End PBXBuildFile section */
@@ -68,6 +70,10 @@
 		7F6DD20B188AF83D0089E6AE /* MRRFolderTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRFolderTableViewController.m; sourceTree = "<group>"; };
 		7F6DD20D188B04E90089E6AE /* MRRNewFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRRNewFeedViewController.h; sourceTree = "<group>"; };
 		7F6DD20E188B04E90089E6AE /* MRRNewFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRNewFeedViewController.m; sourceTree = "<group>"; };
+		7FAC2752188F5240007DE106 /* MRRWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRRWebViewController.h; sourceTree = "<group>"; };
+		7FAC2753188F5240007DE106 /* MRRWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRWebViewController.m; sourceTree = "<group>"; };
+		7FAC2756188F5A5F007DE106 /* MRRHTMLSourceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRRHTMLSourceViewController.h; sourceTree = "<group>"; };
+		7FAC2757188F5A5F007DE106 /* MRRHTMLSourceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRHTMLSourceViewController.m; sourceTree = "<group>"; };
 		7FFB08BB188B13180043C88F /* MRRFeedTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRRFeedTableViewController.h; sourceTree = "<group>"; };
 		7FFB08BC188B13180043C88F /* MRRFeedTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MRRFeedTableViewController.m; sourceTree = "<group>"; };
 		F3BA8A6955A342F6BBAFB955 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
@@ -151,10 +157,12 @@
 		7F6DD1D8188AE5E30089E6AE /* My RSS Reader */ = {
 			isa = PBXGroup;
 			children = (
+				7F6DD1E4188AE5E30089E6AE /* Main.storyboard */,
+				7FAC2759188F5A62007DE106 /* HTML Source View */,
+				7FAC2755188F5245007DE106 /* Web View */,
 				7FFB08BF188B14B80043C88F /* Main TableView */,
 				7FFB08C1188B14D80043C88F /* Folder TableView */,
 				7FFB08BE188B14A80043C88F /* Feed TableView */,
-				7F6DD1E4188AE5E30089E6AE /* Main.storyboard */,
 				7F209A8F188B2A5200DC05A6 /* Article View */,
 				7FFB08C0188B14C50043C88F /* New Feed View */,
 				7F209A93188B750B00DC05A6 /* NSUserDefaults Manager */,
@@ -193,6 +201,24 @@
 				7F6DD1FA188AE5E30089E6AE /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7FAC2755188F5245007DE106 /* Web View */ = {
+			isa = PBXGroup;
+			children = (
+				7FAC2752188F5240007DE106 /* MRRWebViewController.h */,
+				7FAC2753188F5240007DE106 /* MRRWebViewController.m */,
+			);
+			name = "Web View";
+			sourceTree = "<group>";
+		};
+		7FAC2759188F5A62007DE106 /* HTML Source View */ = {
+			isa = PBXGroup;
+			children = (
+				7FAC2756188F5A5F007DE106 /* MRRHTMLSourceViewController.h */,
+				7FAC2757188F5A5F007DE106 /* MRRHTMLSourceViewController.m */,
+			);
+			name = "HTML Source View";
 			sourceTree = "<group>";
 		};
 		7FFB08BE188B14A80043C88F /* Feed TableView */ = {
@@ -368,6 +394,8 @@
 				7F209A92188B750600DC05A6 /* MRRNSUserDefaultsManager.m in Sources */,
 				7F6DD20C188AF83D0089E6AE /* MRRFolderTableViewController.m in Sources */,
 				7F6DD209188AE67A0089E6AE /* MRRMainTableViewController.m in Sources */,
+				7FAC2758188F5A5F007DE106 /* MRRHTMLSourceViewController.m in Sources */,
+				7FAC2754188F5240007DE106 /* MRRWebViewController.m in Sources */,
 				7F6DD1DF188AE5E30089E6AE /* main.m in Sources */,
 				7F6DD20F188B04E90089E6AE /* MRRNewFeedViewController.m in Sources */,
 				7F209A8E188B2A4C00DC05A6 /* MRRArticleViewController.m in Sources */,

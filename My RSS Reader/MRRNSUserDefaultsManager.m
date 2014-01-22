@@ -25,7 +25,7 @@
 {
     NSMutableArray *folders = [self folders];
     
-    //Lazy instantiation of user defaults main dictionary of folders
+    //Lazy instantiation of user defaults main array of folders
     if (!folders)
     {
         folders = [[NSMutableArray alloc] init];

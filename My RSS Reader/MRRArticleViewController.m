@@ -7,11 +7,14 @@
 //
 
 #import "MRRArticleViewController.h"
+#import "MRRWebViewController.h"
 
 @interface MRRArticleViewController ()
 
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *viewWebsiteBarButtonItem;
+@property (strong, nonatomic) NSString *url;
 
 @end
 
@@ -20,6 +23,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    //Extract article url
+    NSError *linkError;
+    NSArray *itemLink = [self.item nodesForXPath:@"//link" error:&linkError];
+    DDXMLDocument *link = [itemLink firstObject];
+    self.url = [link stringValue];
+    
 	// Extract all child elements from item element
     NSArray *itemChildren = [self.item children];
     
@@ -45,6 +54,19 @@
         self.textView.attributedText = longestAttributedString;
         [self.activityIndicator stopAnimating];
     });
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"toWeb"])
+    {
+        NSLog(@"toWeb");
+        if ([segue.destinationViewController isKindOfClass:[MRRWebViewController class]])
+        {
+            MRRWebViewController *webVC = (MRRWebViewController *)segue.destinationViewController;
+            webVC.url = self.url;
+        }
+    }
 }
 
 @end

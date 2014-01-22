@@ -213,15 +213,89 @@
                             <constraint firstAttribute="trailing" secondItem="MkS-Xe-RGD" secondAttribute="trailing" id="wFo-dK-2WX"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="eyd-Fr-s94"/>
+                    <navigationItem key="navigationItem" id="eyd-Fr-s94">
+                        <barButtonItem key="rightBarButtonItem" title="View Website" id="6e3-c2-aDc">
+                            <connections>
+                                <segue destination="ZtY-hL-2Z9" kind="push" identifier="toWeb" id="0Nu-OD-nHV"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="F14-pv-RLl" id="RwJ-Ww-7UY"/>
                         <outlet property="textView" destination="MkS-Xe-RGD" id="Bat-7A-fXy"/>
+                        <outlet property="viewWebsiteBarButtonItem" destination="6e3-c2-aDc" id="MAn-vN-Mfg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vZy-kB-v3m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1862" y="579"/>
+        </scene>
+        <!--Web View Controller-->
+        <scene sceneID="byV-o0-4eL">
+            <objects>
+                <viewController id="ZtY-hL-2Z9" customClass="MRRWebViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="TGc-EJ-NEx"/>
+                        <viewControllerLayoutGuide type="bottom" id="sRM-iW-Njv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="koB-M5-F23">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fPt-Pd-ahc">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="pEO-tc-MNb">
+                        <barButtonItem key="rightBarButtonItem" title="View Source" id="dfO-Eq-r7R">
+                            <connections>
+                                <action selector="viewSourceBarButtonItemPressed:" destination="ZtY-hL-2Z9" id="vOD-Ct-nOe"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="webView" destination="fPt-Pd-ahc" id="deH-Do-clb"/>
+                        <segue destination="too-aW-GT3" kind="push" identifier="toSource" id="Wh3-HA-RVt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NBS-G5-uL3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2246" y="579"/>
+        </scene>
+        <!--Source View Controller-->
+        <scene sceneID="g23-zA-20E">
+            <objects>
+                <viewController id="too-aW-GT3" customClass="MRRHTMLSourceViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Be5-W6-y4d"/>
+                        <viewControllerLayoutGuide type="bottom" id="Upj-Zc-el1"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="a2m-z8-m8x">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qnn-2f-Dbh">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Lx7-4y-zAb"/>
+                    <connections>
+                        <outlet property="textView" destination="Qnn-2f-Dbh" id="zOm-AA-aZC"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rbK-1j-weC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2636" y="578"/>
         </scene>
         <!--New Feed View Controller-->
         <scene sceneID="BEA-RU-GrV">
@@ -290,7 +364,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kXw-Sk-F82" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1468" y="-192"/>
+            <point key="canvasLocation" x="1468" y="-138"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="8gW-S0-pTc">
