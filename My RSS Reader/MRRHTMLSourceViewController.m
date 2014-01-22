@@ -28,9 +28,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    NSLog(@"self.html = %@", self.html);
-
+	
+    //Set textView's text property to NSstring of the site's HTML source
     self.textView.text = self.html;
 }
 

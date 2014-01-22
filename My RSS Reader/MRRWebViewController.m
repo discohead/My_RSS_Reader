@@ -28,8 +28,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-
+	
+    //Load RSS link element URL in webView
     NSURL *articleURL = [NSURL URLWithString:self.url];
     NSURLRequest *request = [NSURLRequest requestWithURL:articleURL];
     [self.webView loadRequest:request];
@@ -43,8 +43,10 @@
 }
 - (IBAction)viewSourceBarButtonItemPressed:(id)sender
 {
+    //Extract the currently loaded page's HTML source via JavaScript
     self.html = [self.webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
     
+    //Segue to textView to see source
     [self performSegueWithIdentifier:@"toSource" sender:self];
 }
 
@@ -55,6 +57,8 @@
         if ([segue.destinationViewController isKindOfClass:[MRRHTMLSourceViewController class]])
         {
             MRRHTMLSourceViewController *sourceVC = (MRRHTMLSourceViewController *)segue.destinationViewController;
+            
+            //Pass extracted HTML to source view controller
             sourceVC.html = self.html;
         }
     }

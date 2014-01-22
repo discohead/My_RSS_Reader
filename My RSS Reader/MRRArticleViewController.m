@@ -23,7 +23,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //Extract article url
+    
+    //Extract RSS <link> element URL
     NSError *linkError;
     NSArray *itemLink = [self.item nodesForXPath:@"//link" error:&linkError];
     DDXMLDocument *link = [itemLink firstObject];
@@ -39,7 +40,7 @@
         itemChildrenStrings[i] = [itemChildren[i] stringValue];
     }
     
-    //Uber hacky algorithm to select best element to display as article content in textView
+    //¨Uber hacky "algorithm" to select best element to display as article content in textView
     //Sort xml stringValues by length and store the longest
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"length" ascending:YES];
     NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
