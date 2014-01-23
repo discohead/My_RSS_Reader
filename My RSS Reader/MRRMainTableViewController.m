@@ -212,13 +212,19 @@
     NSURL *url = [NSURL URLWithString:fromURL];
     NSData *data = [NSData dataWithContentsOfURL:url];
     DDXMLDocument *opmlDoc = [[DDXMLDocument alloc] initWithData:data options:0 error:nil];
+    
+    //Select all of the outer most outline elements (i.e. outlines that are children of the body element)
     NSArray *outline = [opmlDoc nodesForXPath:@"/opml/body/outline" error:nil];
+    
+    //Enumerate through them creating folders and feeds
     for (DDXMLElement *element in outline)
     {
         NSMutableDictionary *currentFolder = [[NSMutableDictionary alloc] initWithObjects:@[@"",[[NSMutableArray alloc] init]] forKeys:@[@"name",@"feeds"]];
         
+        //If outline element has children, I believe it is safe to assume it is a "folder" and the children are feeds
         if ([[element children] count])
         {
+            //OPML stores all of the info as attributes. There is no text between tags.
             NSArray *attributes = [element attributes];
             NSArray *feeds = [element children];
             

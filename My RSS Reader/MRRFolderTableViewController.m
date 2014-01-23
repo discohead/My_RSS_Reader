@@ -25,6 +25,8 @@
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.navigationItem.title = self.folder[@"name"];
     
+    
+    //Dispatch thread to update all rss feeds
     dispatch_queue_t fetchThread = dispatch_queue_create("fetch", NULL);
     dispatch_async(fetchThread, ^{
         for (int i = 0; i < [self.folder[@"feeds"] count]; i++)
@@ -32,6 +34,8 @@
             NSMutableDictionary *feed = self.folder[@"feeds"][i];
             [self fetchRSS:feed];
         }
+        
+        //Reload tableview data from main thread
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
@@ -186,6 +190,7 @@
     
 }
 
+//Need to fix issue that produces "namespace error: Namespace prefix xxx on xxx is not defined" although doesn't seem to be causing problems yet
 - (void)parseXML:(DDXMLDocument *)xmlDoc forFeed:(NSMutableDictionary *)feed
 {
     NSError *error = nil;
