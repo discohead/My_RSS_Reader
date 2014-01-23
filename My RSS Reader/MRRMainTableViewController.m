@@ -209,58 +209,16 @@
 
 - (void)importOPMLFile:(NSString *)fromURL
 {
+    //Get OPML data from URL and init DDXML document
     NSURL *url = [NSURL URLWithString:fromURL];
     NSData *data = [NSData dataWithContentsOfURL:url];
     DDXMLDocument *opmlDoc = [[DDXMLDocument alloc] initWithData:data options:0 error:nil];
     
     //Select all of the outer most outline elements (i.e. outlines that are children of the body element)
-    NSArray *outline = [opmlDoc nodesForXPath:@"/opml/body/outline" error:nil];
+    NSArray *outlines = [opmlDoc nodesForXPath:@"/opml/body/outline" error:nil];
     
-    //Enumerate through them creating folders and feeds
-    for (DDXMLElement *element in outline)
-    {
-        NSMutableDictionary *currentFolder = [[NSMutableDictionary alloc] initWithObjects:@[@"",[[NSMutableArray alloc] init]] forKeys:@[@"name",@"feeds"]];
-        
-        //If outline element has children, I believe it is safe to assume it is a "folder" and the children are feeds
-        if ([[element children] count])
-        {
-            //OPML stores all of the info as attributes. There is no text between tags.
-            NSArray *attributes = [element attributes];
-            NSArray *feeds = [element children];
-            
-            for (DDXMLNode *attribute in attributes)
-            {
-                if ([[attribute name] isEqualToString:@"text"])
-                {
-                    NSString *folderName = [attribute stringValue];
-                    [currentFolder setObject:folderName forKey:@"name"];
-                    [self.folders addObject:currentFolder];
-                }
-            }
-            
-            for (DDXMLElement *feed in feeds)
-            {
-                NSArray *feedAttributes = [feed attributes];
-                NSMutableDictionary *feedDictionary = [[NSMutableDictionary alloc] initWithObjects:@[currentFolder[@"name"],@"",@"",[NSMutableArray array]] forKeys:@[@"folder",@"feedName",@"rssURL",@"items"]];
-                NSMutableArray *folderFeeds = currentFolder[@"feeds"];
-                for (DDXMLNode *feedAttribute in feedAttributes)
-                {
-                    if ([[feedAttribute name] isEqualToString:@"text"])
-                    {
-                        [feedDictionary setObject:[feedAttribute stringValue] forKey:@"feedName"];
-                    }
-                    else if ([[feedAttribute name] isEqualToString:@"xmlUrl"])
-                    {
-                        [feedDictionary setObject:[feedAttribute stringValue] forKey:@"rssURL"];
-                    }
-                }
-                [folderFeeds addObject:feedDictionary];
-            }
-            
-        }
-    }
+    [self parseOutlineElements:outlines];
     [self.userDefaultsManager updateAllFolders:self.folders];
-    [self.tableView reloadData];
     
 }
 
@@ -269,6 +227,162 @@
     NSMutableDictionary *folder = [[NSMutableDictionary alloc] initWithObjects:@[folderName,[[NSMutableArray alloc] init]] forKeys: @[@"name",@"feeds"]];
     [self.folders addObject:folder];
     [self.userDefaultsManager addFolder:folder];
+    [self.tableView reloadData];
+}
+
+- (NSMutableArray *)folderFromOPML:(DDXMLElement *)outlineElement
+{
+    //Container array to be returned holding the folder dictionary and feed array for separate processsing
+    NSMutableArray *wrapperArray = [[NSMutableArray alloc] init];
+    
+    //Initialize folder dictionary
+    NSMutableDictionary *folder = [[NSMutableDictionary alloc] initWithObjects:@[@"",[[NSMutableArray alloc] init]] forKeys:@[@"name",@"feeds"]];
+    
+    //The folder name will be stored in the DDXMLElement's attributes so we grab them
+    NSArray *attributes = [outlineElement attributes];
+    
+    //The element's children will presumably be feeds, but could possibly be nested folders, we handle that case later
+    NSMutableArray *children = [[outlineElement children] mutableCopy];
+    NSMutableArray *feeds = [[NSMutableArray alloc] init];
+    for (DDXMLElement *child in children)
+    {
+        NSArray *attributes = [child attributes];
+        for (DDXMLElement *attribute in attributes)
+        {
+            if ([[attribute stringValue] isEqualToString:@"rss"])
+            {
+                [feeds addObject:child];
+            }
+        }
+    }
+    
+    
+    //Enumerate through the attributes set foldername equal to text attribute, replace existing folder of same name if found, otherwise add new folder
+    for (DDXMLNode *attribute in attributes)
+    {
+        if ([[attribute name] isEqualToString:@"text"])
+        {
+            NSString *folderName = [attribute stringValue];
+            [folder setObject:folderName forKey:@"name"];
+            
+            if ([self.folders count])
+            {
+                for (int i = 0; i < [self.folders count]; i++)
+                {
+                    if ([self.folders[i][@"name"] isEqualToString:folderName])
+                    {
+                        [self.folders replaceObjectAtIndex:i withObject:folder];
+                        break;
+                    }
+                    else if (i == [self.folders count]-1)
+                    {
+                        [self.folders addObject:folder];
+                    }
+                }
+            }
+            else
+            {
+                [self.folders addObject:folder];
+            }
+        }
+    }
+    
+    //Add newly created folder dictionary and feeds array to container array to be returned
+    [wrapperArray addObject:folder];
+    [wrapperArray addObject:feeds];
+    
+    return wrapperArray;
+}
+
+- (void)feedsFromOPML:(NSMutableArray *)feeds forFolder:(NSMutableDictionary *)folder
+{
+    //Enumerate the feed elements creating dictionary's with the text attribute as the feedName and the xmlUrl attribute as the rssURL
+    for (DDXMLElement *feed in feeds)
+    {
+        NSArray *feedAttributes = [feed attributes];
+        NSMutableDictionary *feedDictionary = [[NSMutableDictionary alloc] initWithObjects:@[folder[@"name"],@"",@"",[NSMutableArray array]] forKeys:@[@"folder",@"feedName",@"rssURL",@"items"]];
+        NSMutableArray *folderFeeds = folder[@"feeds"];
+        for (DDXMLNode *feedAttribute in feedAttributes)
+        {
+            if ([[feedAttribute name] isEqualToString:@"text"])
+            {
+                [feedDictionary setObject:[feedAttribute stringValue] forKey:@"feedName"];
+            }
+            else if ([[feedAttribute name] isEqualToString:@"xmlUrl"])
+            {
+                [feedDictionary setObject:[feedAttribute stringValue] forKey:@"rssURL"];
+            }
+        }
+        
+        //Add feed dictionary to folder
+        [folderFeeds addObject:feedDictionary];
+    }
+}
+
+- (void)parseOutlineElements:(NSArray *)outlineElements
+{
+    //Default catch-all folder for feeds not in any folder
+    NSMutableDictionary *myFeedsFolder = [[NSMutableDictionary alloc] initWithObjects:@[@"My Feeds",[NSMutableArray array]] forKeys: @[@"name",@"feeds"]];
+    
+    //Enumerate through the outline element creating folders and feeds
+    for (DDXMLElement *element in outlineElements)
+    {
+        //Create copy so that we can remove child nodes that are nested folders while in fast enumeration
+        DDXMLElement *elementCopy = [element copy];
+        
+        //Container array to receive return value from folderFromOPML method
+        NSMutableArray *elementContainer = [[NSMutableArray alloc] init];
+        
+        NSMutableDictionary *currentFolder = [[NSMutableDictionary alloc] init];
+        NSArray *children = [element children];
+        
+        //If outline element has children, we assume it is a "folder"
+        if ([children count])
+        {
+            for (DDXMLElement *child in children)
+            {
+                //If any of the folder's children have children then we call this method again with the nested folder, this brings all nested folders out to the top level
+                if ([[child children] count])
+                {
+                    //Get index of child remove from copy, separate out nested folders and leave only feeds
+                    NSUInteger index = [child index];
+                    [elementCopy removeChildAtIndex:index];
+                    
+                    //Recursive call with nested folder element
+                    [self parseOutlineElements:@[child]];
+                }
+            }
+            
+            //Create folder with element copy that has had nested folders removed (if any)
+            elementContainer = [self folderFromOPML:elementCopy];
+            currentFolder = elementContainer[0];
+            NSMutableArray *feeds = elementContainer[1];
+            [self feedsFromOPML:feeds forFolder:currentFolder];
+            
+        } else
+        {
+            if ([self.folders count])
+            {
+                //Deal with feeds outside of any folder by creating (or adding to) a default "My Feeds" folder
+                for (NSMutableDictionary *folder in self.folders)
+                {
+                    if ([folder[@"name"] isEqualToString:@"My Feeds"])
+                    {
+                        myFeedsFolder = folder;
+                    } else
+                    {
+                        [self.folders addObject:myFeedsFolder];
+                    }
+                }
+            }
+            else
+            {
+                [self.folders addObject:myFeedsFolder];
+            }
+            
+            [self feedsFromOPML:[[NSMutableArray alloc] initWithObjects:element, nil] forFolder:myFeedsFolder];
+        }
+    }
     [self.tableView reloadData];
 }
 
