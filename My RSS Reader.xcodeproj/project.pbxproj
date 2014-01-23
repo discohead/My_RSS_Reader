@@ -158,12 +158,12 @@
 			isa = PBXGroup;
 			children = (
 				7F6DD1E4188AE5E30089E6AE /* Main.storyboard */,
-				7FAC2759188F5A62007DE106 /* HTML Source View */,
-				7FAC2755188F5245007DE106 /* Web View */,
 				7FFB08BF188B14B80043C88F /* Main TableView */,
 				7FFB08C1188B14D80043C88F /* Folder TableView */,
 				7FFB08BE188B14A80043C88F /* Feed TableView */,
 				7F209A8F188B2A5200DC05A6 /* Article View */,
+				7FAC2755188F5245007DE106 /* Web View */,
+				7FAC2759188F5A62007DE106 /* HTML Source View */,
 				7FFB08C0188B14C50043C88F /* New Feed View */,
 				7F209A93188B750B00DC05A6 /* NSUserDefaults Manager */,
 				7F6DD1EA188AE5E30089E6AE /* Images.xcassets */,

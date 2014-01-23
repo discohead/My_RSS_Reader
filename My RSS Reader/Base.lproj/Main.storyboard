@@ -59,9 +59,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Folders" id="BdT-9K-jg6">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" id="X85-gx-LLX">
+                        <barButtonItem key="leftBarButtonItem" title="Import OPML" id="X85-gx-LLX">
                             <connections>
-                                <action selector="settingsBarButtonItemPressed:" destination="YTk-CG-UZ6" id="Ne4-TW-D73"/>
+                                <action selector="importOPMLBarButtonItemPressed:" destination="YTk-CG-UZ6" id="Nvi-go-6QY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

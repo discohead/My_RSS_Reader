@@ -24,6 +24,20 @@
 
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.navigationItem.title = self.folder[@"name"];
+    
+    dispatch_queue_t fetchThread = dispatch_queue_create("fetch", NULL);
+    dispatch_async(fetchThread, ^{
+        for (int i = 0; i < [self.folder[@"feeds"] count]; i++)
+        {
+            NSMutableDictionary *feed = self.folder[@"feeds"][i];
+            [self fetchRSS:feed];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    });
+    
+    
 }
 
 
@@ -192,9 +206,14 @@
     }
     
     //Update tableview datasource, user defaults and reload tableview on main thread
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self addFeed:feed];
-    });
+    NSMutableArray *feeds = self.folder[@"feeds"];
+    if (![feeds containsObject:feed])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self addFeed:feed];
+        });
+    }
+    
 }
 
 - (void)addFeed:(NSMutableDictionary *)feed

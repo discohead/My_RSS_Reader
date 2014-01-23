@@ -9,6 +9,7 @@
 #import "MRRMainTableViewController.h"
 #import "MRRFolderTableViewController.h"
 #import "MRRNSUserDefaultsManager.h"
+#import "DDXML.h"
 
 @interface MRRMainTableViewController () <UIAlertViewDelegate>
 
@@ -169,25 +170,100 @@
     [newFolder show];
 }
 
-- (IBAction)settingsBarButtonItemPressed:(id)sender
+- (IBAction)importOPMLBarButtonItemPressed:(UIBarButtonItem *)sender
 {
-    //To do:
+    //Get URL for OPML file via alert view
+    UIAlertView *opmlURL = [[UIAlertView alloc] initWithTitle:@"Import OPML" message:@"Enter URL to OPML file" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    opmlURL.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [opmlURL show];
 }
+
 
 #pragma mark - UIAlertViewDelegate
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    
-    if (buttonIndex == 1)
+    if ([alertView.title isEqualToString:@"New Folder"])
     {
-        //Create new folder update datasource and user defaults
-        UITextField *folderName = [alertView textFieldAtIndex:0];
-        NSMutableDictionary *folder = [[NSMutableDictionary alloc] initWithObjects:@[folderName.text,[[NSMutableArray alloc] init]] forKeys: @[@"name",@"feeds"]];
-        [self.folders addObject:folder];
-        [self.userDefaultsManager addFolder:folder];
-        [self.tableView reloadData];
+        if (buttonIndex == 1)
+        {
+            //Create new folder update datasource and user defaults
+            NSString *folderName = [alertView textFieldAtIndex:0].text;
+            [self createNewFolder:folderName];
+        }
     }
+    else if ([alertView.title isEqualToString:@"Import OPML"])
+    {
+        if (buttonIndex == 1)
+        {
+            //Get URL from alertView
+            NSString *opmlURL = [alertView textFieldAtIndex:0].text;
+            
+            //Import OPML file from URL, parse, create folders and feeds
+            [self importOPMLFile:opmlURL];
+        }
+    }
+}
+
+#pragma mark - Helper Methods
+
+- (void)importOPMLFile:(NSString *)fromURL
+{
+    NSURL *url = [NSURL URLWithString:fromURL];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    DDXMLDocument *opmlDoc = [[DDXMLDocument alloc] initWithData:data options:0 error:nil];
+    NSArray *outline = [opmlDoc nodesForXPath:@"/opml/body/outline" error:nil];
+    for (DDXMLElement *element in outline)
+    {
+        NSMutableDictionary *currentFolder = [[NSMutableDictionary alloc] initWithObjects:@[@"",[[NSMutableArray alloc] init]] forKeys:@[@"name",@"feeds"]];
+        
+        if ([[element children] count])
+        {
+            NSArray *attributes = [element attributes];
+            NSArray *feeds = [element children];
+            
+            for (DDXMLNode *attribute in attributes)
+            {
+                if ([[attribute name] isEqualToString:@"text"])
+                {
+                    NSString *folderName = [attribute stringValue];
+                    [currentFolder setObject:folderName forKey:@"name"];
+                    [self.folders addObject:currentFolder];
+                }
+            }
+            
+            for (DDXMLElement *feed in feeds)
+            {
+                NSArray *feedAttributes = [feed attributes];
+                NSMutableDictionary *feedDictionary = [[NSMutableDictionary alloc] initWithObjects:@[currentFolder[@"name"],@"",@"",[NSMutableArray array]] forKeys:@[@"folder",@"feedName",@"rssURL",@"items"]];
+                NSMutableArray *folderFeeds = currentFolder[@"feeds"];
+                for (DDXMLNode *feedAttribute in feedAttributes)
+                {
+                    if ([[feedAttribute name] isEqualToString:@"text"])
+                    {
+                        [feedDictionary setObject:[feedAttribute stringValue] forKey:@"feedName"];
+                    }
+                    else if ([[feedAttribute name] isEqualToString:@"xmlUrl"])
+                    {
+                        [feedDictionary setObject:[feedAttribute stringValue] forKey:@"rssURL"];
+                    }
+                }
+                [folderFeeds addObject:feedDictionary];
+            }
+            
+        }
+    }
+    [self.userDefaultsManager updateAllFolders:self.folders];
+    [self.tableView reloadData];
+    
+}
+
+- (void)createNewFolder:(NSString *)folderName
+{
+    NSMutableDictionary *folder = [[NSMutableDictionary alloc] initWithObjects:@[folderName,[[NSMutableArray alloc] init]] forKeys: @[@"name",@"feeds"]];
+    [self.folders addObject:folder];
+    [self.userDefaultsManager addFolder:folder];
+    [self.tableView reloadData];
 }
 
 @end
