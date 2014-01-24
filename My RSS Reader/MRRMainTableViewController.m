@@ -296,6 +296,12 @@
 
 - (void)feedsFromOPML:(NSMutableArray *)feeds forFolder:(NSMutableDictionary *)folder
 {
+    //If folder exists re-initizalize it
+    if ([self.folders containsObject:folder])
+    {
+        [folder setObject:[[NSMutableArray alloc] init] forKey:@"feeds"];
+    }
+    
     //Enumerate the feed elements creating dictionary's with the text attribute as the feedName and the xmlUrl attribute as the rssURL
     for (DDXMLElement *feed in feeds)
     {
@@ -323,6 +329,7 @@
 {
     //Default catch-all folder for feeds not in any folder
     NSMutableDictionary *myFeedsFolder = [[NSMutableDictionary alloc] initWithObjects:@[@"My Feeds",[NSMutableArray array]] forKeys: @[@"name",@"feeds"]];
+    NSMutableArray *looseFeeds = [[NSMutableArray alloc] init];
     
     //Enumerate through the outline element creating folders and feeds
     for (DDXMLElement *element in outlineElements)
@@ -364,12 +371,13 @@
             if ([self.folders count])
             {
                 //Deal with feeds outside of any folder by creating (or adding to) a default "My Feeds" folder
-                for (NSMutableDictionary *folder in self.folders)
+                for (int i = 0; i < [self.folders count]; i++)
                 {
-                    if ([folder[@"name"] isEqualToString:@"My Feeds"])
+                    if ([self.folders[i][@"name"] isEqualToString:@"My Feeds"])
                     {
-                        myFeedsFolder = folder;
-                    } else
+                        myFeedsFolder = self.folders[i];
+                        break;
+                    } else if (i == [self.folders count]-1)
                     {
                         [self.folders addObject:myFeedsFolder];
                     }
@@ -379,10 +387,11 @@
             {
                 [self.folders addObject:myFeedsFolder];
             }
-            
-            [self feedsFromOPML:[[NSMutableArray alloc] initWithObjects:element, nil] forFolder:myFeedsFolder];
+            //Collect all of the feeds outside of a folder and put them into the default "My Feeds" folder
+            [looseFeeds addObject:elementCopy];
         }
     }
+    [self feedsFromOPML:looseFeeds forFolder:myFeedsFolder];
     [self.tableView reloadData];
 }
 
